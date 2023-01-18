@@ -161,3 +161,38 @@ resource "aws_lb" "front" {
     Environment = "front2"
   }
 }
+  
+#Network load balancer Configuration 
+  
+module "nlb" {
+source  = "terraform-aws-modules/alb/aws"
+version = "6.0"
+
+name = "my-nlb"
+
+load_balancer_type = "network"
+
+vpc_id  = "vpc-06c32d2a6eb38ff38"
+subnets = ["subnet-06cfdb46817604330","subnet-0dc20436e46416488"]
+
+target_groups = [
+  {
+    name_prefix      = "pref-"
+    backend_protocol = "TCP"
+    backend_port     = 80
+    target_type      = "ip"
+  }
+]
+
+http_tcp_listeners = [
+  {
+    port               = 80
+    protocol           = "TCP" 
+    target_group_index = 0    
+  }
+]
+
+tags = {
+  Environment = "Test"
+}
+}
